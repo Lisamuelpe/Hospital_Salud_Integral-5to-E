@@ -1,0 +1,288 @@
+Documento técnico general · Sistema de Gestión Hospitalaria (Hospital Salud Integral)
+Documento técnico general · Sistema de
+Gestión Hospitalaria
+Proyecto integrador RA2 · Hospital Salud Integral · Versión 1.0
+1. Introducción
+1.1 Propósito del documento
+Este documento describe de forma general el funcionamiento del Sistema de Gestión
+Hospitalaria: qué problema resuelve, qué módulos tiene, cómo se organiza la información y
+qué puede hacer cada tipo de usuario. Está pensado como referencia común para todo el
+equipo (base de datos, desarrollo, interfaz y administración).
+1.2 Descripción del sistema
+El sistema es una aplicación de uso empresarial para administrar la información de un
+hospital. Permite gestionar pacientes, médicos, departamentos, especialidades, servicios,
+citas, consultas, recetas y medicamentos desde un único punto de acceso, respaldado
+por una base de datos central (
+hospital_salud_integral , MySQL).
+La característica principal es el control de acceso por roles: cada persona inicia sesión
+con su usuario y, según su rol, el sistema le muestra únicamente los módulos y las
+acciones que le corresponden.
+1.3 Alcance y aviso de datos
+Todo el contenido del sistema es ficticio. Ningún dato corresponde a personas reales, y la
+interfaz debe indicarlo con un aviso visible ("Entorno de pruebas · datos ficticios").
+2. Objetivos del sistema
+Centralizar la información del hospital en una sola base de datos, evitando duplicidad y
+datos dispersos.
+Agilizar el registro de pacientes y la programación de citas.
+Permitir al médico registrar el diagnóstico, las observaciones y la receta de cada
+consulta.
+Page 1 of 9
+Mantener un inventario básico de medicamentos con su stock.
+Proteger la información sensible mediante autenticación y permisos por rol.
+3. Roles de usuario
+El sistema define tres roles. El rol se guarda en el campo roles de la tabla usuarios y
+determina qué módulos se muestran y qué acciones están habilitadas.
+3.1 Matriz de permisos
+La siguiente matriz resume lo que puede hacer cada rol en cada módulo. C = crear, L = leer,
+E = editar, X = eliminar. Un guion (–) significa que no tiene acceso.
+Rol Responsabilidad principal
+Administración Configuración y control total del sistema: usuarios,
+roles y catálogos; consulta de toda la información.
+Médico Atiende pacientes: consulta su agenda, registra
+consultas y emite recetas.
+Recepcionista Primera línea de atención: registra pacientes y
+gestiona las citas.
+Módulo Administración Médico Recepcionista
+Panel principal L L (su agenda) L
+Pacientes C, L, E, X L C, L, E
+Médicos C, L, E, X L L
+Departamentos y
+especialidades
+C, L, E, X L L
+Servicios C, L, E, X L L
+Citas C, L, E, X L (las suyas) y actualizar
+estado
+C, L, E,
+cancelar
+Consultas L C, L, E (las suyas)
+Receta (detalle) L C, L, E
+Documento técnico general · Sistema de Gestión Hospitalaria (Hospital Salud Integral)
+Page 2 of 9
+Documento técnico general · Sistema de Gestión Hospitalaria (Hospital Salud Integral)
+Módulo
+Medicamentos
+Usuarios y roles
+Perfil propio
+Administración
+C, L, E, X
+Médico
+L
+Recepcionista
+C, L, E, X
+L, E
+L, E
+L, E
+Esta matriz es la propuesta de trabajo y debe confirmarse con el equipo antes de
+implementarse. Cuando un usuario intenta acceder a algo que no le corresponde, el
+sistema muestra la pantalla de acceso denegado.
+4. Funcionalidades generales
+4.1 Inicio de sesión y seguridad
+Acceso mediante usuario y contraseña. Las contraseñas se almacenan como hash
+(p
+assword_hash ), nunca en texto plano.
+Mensaje genérico ante credenciales incorrectas, sin revelar si falló el usuario o la
+contraseña.
+Manejo de cuentas bloqueadas o desactivadas.
+Cierre de sesión por inactividad, con aviso previo.
+Recuperación de contraseña a través del administrador.
+Cada usuario puede ver su perfil y cambiar su contraseña; el rol no es editable por el
+propio usuario.
+4.2 Panel principal
+Resumen rápido del día según el rol:
+Administración: indicadores generales (citas del día, pacientes registrados,
+medicamentos con stock bajo).
+Recepcionista: citas de hoy, citas pendientes y accesos rápidos a "Nuevo paciente" y
+"Nueva cita".
+Médico: su agenda del día y próximas citas.
+Page 3 of 9
+Documento técnico general · Sistema de Gestión Hospitalaria (Hospital Salud Integral)
+4.3 Gestión de pacientes
+Registro y mantenimiento de los datos del paciente: documento de identidad (único),
+nombre, apellido, fecha de nacimiento, sexo y teléfono. Incluye búsqueda por nombre o
+documento, filtros, validación de duplicados y una ficha del paciente con su historial de
+citas y consultas.
+4.4 Gestión de médicos, departamentos y especialidades
+Médicos: nombre, apellido, licencia (única), teléfono y especialidad.
+Departamentos: áreas del hospital, con nombre (único) y ubicación.
+Especialidades: pertenecen a un departamento y se asignan a los médicos.
+Un departamento agrupa varias especialidades y ofrece varios servicios. No se puede
+eliminar un departamento que tenga especialidades o servicios asociados.
+4.5 Servicios
+Catálogo de servicios que ofrece cada departamento, con nombre y costo. Cada cita se
+asocia a un servicio, de modo que el costo queda definido por el servicio solicitado.
+4.6 Citas
+Es el módulo central del sistema. Una cita relaciona a un paciente, un médico y un servicio
+en una fecha y hora determinadas, y tiene un estado.
+Estados propuestos: Programada, Confirmada, Atendida, Cancelada y No asistió (los
+nombres exactos se definirán con el equipo de datos).
+Vistas: lista con filtros (fecha, médico, estado) y calendario (día, semana, mes).
+Acciones: crear, reprogramar, cancelar (con confirmación y motivo), marcar como
+atendida y abrir la consulta.
+Reglas de validación: no se permite programar en fechas pasadas ni asignar a un
+médico dos citas en el mismo horario.
+4.7 Consultas y recetas
+Cuando una cita es atendida, el médico registra la consulta: diagnóstico y observaciones.
+De forma opcional, la consulta incluye una receta con uno o varios medicamentos; para
+cada uno se indica la dosis, la duración en días y un campo de detalles (por ejemplo,
+cuando el médico envía al paciente a realizarse estudios u otras indicaciones).
+Page 4 of 9
+Documento técnico general · Sistema de Gestión Hospitalaria (Hospital Salud Integral)
+Cada cita genera como máximo una consulta (relación 1 : 0..1).
+El sistema avisa si un medicamento recetado tiene stock bajo o agotado.
+La información clínica es sensible: se muestra en vista de solo lectura para quien solo
+consulta, y no se expone en listados generales.
+4.8 Medicamentos
+Inventario básico con nombre, presentación (tabletas, jarabe, etc.) y stock. El stock se
+acompaña de un indicador visual (normal, bajo, agotado) y permite filtrar los
+medicamentos con existencias bajas.
+4.9 Usuarios y roles
+Exclusivo de Administración: crear usuarios, asignar o cambiar roles, activar o desactivar
+cuentas, restablecer contraseñas y consultar la matriz de permisos.
+5. Flujo de trabajo típico
+1. La recepcionista inicia sesión y registra al paciente (o lo busca si ya existe).
+2. Agenda una cita eligiendo servicio, médico, fecha y hora.
+3. El día de la cita, el médico abre su agenda, atiende al paciente y registra la consulta
+con diagnóstico, observaciones y receta.
+4. La cita pasa a estado Atendida y la consulta queda en el historial del paciente.
+5. Administración supervisa la información, mantiene los catálogos (departamentos,
+especialidades, servicios, medicamentos) y administra los usuarios.
+6. Modelo de datos
+La base de datos 
+hospital_salud_integral está compuesta por 10 tablas.
+6.1 Descripción de las tablas
+Tabla
+Propósito
+usuarios
+Acceso al sistema y roles
+Campos principales
+id_usuario (PK), username (UK),
+password_hash, roles
+Page 5 of 9
+6.2 Relaciones
+Tabla Propósito Campos principales
+departamentos Áreas del hospital id_departamento (PK), nombre (UK),
+ubicacion
+especialidades Especialidades médicas id_especialidad (PK),
+id_departamento (FK), nombre (UK)
+servicios Servicios que se ofrecen id_servicio (PK), id_departamento
+(FK), nombre, costo
+medicos Personal médico id_medico (PK), id_especialidad (FK),
+nombre, apellido, licencia (UK),
+telefono
+pacientes Pacientes registrados id_paciente (PK), documento (UK),
+nombre, apellido, fecha_nacimiento,
+sexo, telefono
+citas Citas programadas id_cita (PK), id_paciente (FK),
+id_medico (FK), id_servicio (FK),
+fecha_hora, estado
+consultas Atención realizada en una cita id_consulta (PK), id_cita (FK),
+diagnostico, observaciones
+medicamentos Inventario de medicamentos id_medicamento (PK), nombre,
+presentacion, stock
+detalle_receta Medicamentos recetados en
+una consulta
+id_consulta (PK, FK), id_medicamento
+(PK, FK), dosis, duracion_dias,
+detalles
+Relación Cardinalidad Significado
+departamentos → servicios 1 : N Un departamento ofrece varios servicios
+departamentos →
+especialidades
+1 : N Un departamento agrupa varias
+especialidades
+especialidades → medicos 1 : N Una especialidad la tienen varios médicos
+medicos → citas 1 : N Un médico atiende varias citas
+Documento técnico general · Sistema de Gestión Hospitalaria (Hospital Salud Integral)
+Page 6 of 9
+detalle_receta es la tabla intermedia entre consultas y medicamentos (relación
+muchos a muchos), con clave primaria compuesta por ambos identificadores.
+6.3 Reglas de integridad
+Campos únicos: usuarios.username, departamentos.nombre,
+especialidades.nombre, medicos.licencia y pacientes.documento.
+Las claves foráneas impiden eliminar registros que tengan datos dependientes (por
+ejemplo, un departamento con servicios).
+El stock de medicamentos es un entero no negativo.
+7. Tecnologías utilizadas
+La interfaz gráfica se desarrolla en C# sobre la plataforma .NET, conectada a la base de
+datos MySQL del proyecto.
+Relación Cardinalidad Significado
+pacientes → citas 1 : N Un paciente solicita varias citas
+servicios → citas 1 : N Un servicio se incluye en varias citas
+citas → consultas 1 : 0..1 Una cita genera como máximo una consulta
+consultas → detalle_receta 1 : N Una consulta puede recetar varios
+medicamentos
+medicamentos →
+detalle_receta
+1 : N Un medicamento aparece en varias recetas
+Capa Tecnología Uso en el proyecto
+Interfaz gráfica C# y .NET Pantallas, formularios, tablas y navegación
+por rol
+Lógica de la
+aplicación
+C# y .NET Validaciones, control de permisos y reglas
+de negocio (citas, stock, duplicados)
+Acceso a datos Conector de MySQL
+para .NET
+Consultas y operaciones sobre las 10 tablas
+de hospital_salud_integral
+Base de datos MySQL Almacenamiento central de la información
+Documento técnico general · Sistema de Gestión Hospitalaria (Hospital Salud Integral)
+Page 7 of 9
+Documento técnico general · Sistema de Gestión Hospitalaria (Hospital Salud Integral)
+Capa
+Tecnología
+Uso en el proyecto
+Control de
+versiones
+Git y GitHub
+Trabajo colaborativo del equipo en un
+repositorio compartido
+El framework concreto de interfaz dentro de .NET (por ejemplo Windows Forms o WPF)
+debe confirmarse con el equipo; el diseño de pantallas de la guía de interfaz aplica a
+cualquiera de ellos.
+8. Aspectos transversales
+8.1 Seguridad
+Autenticación obligatoria para cualquier pantalla, excepto el inicio de sesión.
+Los permisos deben verificarse en el servidor y no solo ocultando botones en la
+interfaz.
+Contraseñas con hash; nunca visibles en listados ni en mensajes.
+Mensajes de error sin detalles técnicos.
+8.2 Experiencia de usuario
+Interfaz en español, con aplicación de escritorio o web adaptable a tableta.
+Barra lateral con los módulos permitidos para el rol, cabecera con usuario y rol, y área
+de contenido.
+Confirmación antes de eliminar o cancelar, notificaciones breves tras guardar y errores
+visibles junto al campo.
+Accesibilidad: contraste suficiente, navegación por teclado y estados que no dependan
+solo del color.
+El detalle visual de cada pantalla se encuentra en la Guía de interfaz gráfica del proyecto.
+9. Puntos por definir
+Estos puntos surgen al comparar la guía de interfaz con el diagrama entidad–relación y
+conviene resolverlos antes de implementar:
+Page 8 of 9
+Documento técnico general · Sistema de Gestión Hospitalaria (Hospital Salud Integral)
+usuarios no tiene relación con 
+1. Vínculo entre usuario y médico. La tabla 
+lo que el sistema no puede saber qué médico es el usuario que inició sesión (necesario
+para mostrar "Mis citas"). Se sugiere agregar un campo 
+medicos , por
+id_medico (opcional) en
+usuarios .
+2. Rol Farmacia. La guía de interfaz propone un rol Farmacia que aquí no se contempla;
+con tres roles, la gestión de medicamentos queda a cargo de Administración.
+3. Formato del campo 
+roles . Está definido como 
+permitidos (por ejemplo 
+varchar ; conviene fijar los valores
+administracion , 
+medico , 
+recepcionista ).
+4. Estados de cita. Falta confirmar la lista final de valores del campo 
+estado .
+5. Estado de cuenta. La guía menciona usuarios activos o inactivos y último acceso, datos
+que no existen aún en 
+usuarios .
+10. Documentos relacionados
+Guía de interfaz gráfica · Sistema de Gestión Hospitalaria (v1.0).
+Diagrama entidad–relación · Hospital Salud Integral.
+Page 9 of 9

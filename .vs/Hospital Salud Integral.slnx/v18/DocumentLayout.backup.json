@@ -1,0 +1,44 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\lisan\\OneDrive\\Desktop\\5toE\\Administraci\u00F3n de Bases de Datos 26-27\\Sistema de gesti\u00F3n hospitalaria - Hospital Salud Integral\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{C7C0A689-229B-459B-8A49-CC66284952B6}|Forms\\Forms.csproj|c:\\users\\lisan\\onedrive\\desktop\\5toe\\administraci\u00F3n de bases de datos 26-27\\sistema de gesti\u00F3n hospitalaria - hospital salud integral\\forms\\loginform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{C7C0A689-229B-459B-8A49-CC66284952B6}|Forms\\Forms.csproj|solutionrelative:forms\\loginform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "LoginForm.cs [Design]",
+              "DocumentMoniker": "C:\\Users\\lisan\\OneDrive\\Desktop\\5toE\\Administraci\u00F3n de Bases de Datos 26-27\\Sistema de gesti\u00F3n hospitalaria - Hospital Salud Integral\\Forms\\LoginForm.cs",
+              "RelativeDocumentMoniker": "Forms\\LoginForm.cs",
+              "ToolTip": "C:\\Users\\lisan\\OneDrive\\Desktop\\5toE\\Administraci\u00F3n de Bases de Datos 26-27\\Sistema de gesti\u00F3n hospitalaria - Hospital Salud Integral\\Forms\\LoginForm.cs [Design]*",
+              "RelativeToolTip": "Forms\\LoginForm.cs [Design]*",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-22T11:28:29.952Z",
+              "EditorCaption": " [Design]"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{b1e99781-ab81-11d0-b683-00aa00a3ee26}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
